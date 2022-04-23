@@ -4,17 +4,82 @@
  */
 package javaapplication2;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileSystemView;
+
 /**
  *
  * @author mahmood
  */
 public class employee extends javax.swing.JFrame {
 
-    /**
-     * Creates new form employee
-     */
+    static File imgFile;
+    private static String path = null;
+    String msg[];
+
     public employee() {
         initComponents();
+        System.out.println(LogIn.ID);
+        Image image = null;
+        try {
+            URL url = new URL("http://localhost/Net2HW2/api/login.php?");
+            Map<String, Object> params = new LinkedHashMap<>();
+            params.put("id", LogIn.ID);
+            StringBuilder postData = new StringBuilder();
+            for (Map.Entry<String, Object> param : params.entrySet()) {
+                if (postData.length() != 0) {
+                    postData.append('&');
+                }
+                postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                postData.append('=');
+                postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+            }
+            byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+            HttpURLConnection con2;
+            con2 = (HttpURLConnection) url.openConnection();
+
+            con2.setRequestMethod("POST");
+
+            con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            con2.setUseCaches(false);
+            con2.setDoInput(true);
+            con2.setDoOutput(true);
+            DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+            da.writeBytes(postData.toString());
+            da.flush();
+            da.close();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+            String message = bf.readLine();
+            System.out.println(message);
+            msg = message.split("-");
+            jLabel8.setText(msg[0]);
+            jLabel10.setText(msg[1]);
+            jLabel13.setText(msg[2]);
+            jLabel14.setText(msg[3]);
+            URL imgUrl = new URL(msg[4]);
+            image = ImageIO.read(imgUrl);
+            jLabel6.setIcon(new ImageIcon(image));
+
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -28,18 +93,26 @@ public class employee extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
         jTextField5 = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jTextField6 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -53,8 +126,6 @@ public class employee extends javax.swing.JFrame {
 
         jLabel1.setText("Name:");
 
-        jLabel2.setText("ID Number:");
-
         jLabel3.setText("Address:");
 
         jLabel4.setText("Email:");
@@ -62,12 +133,6 @@ public class employee extends javax.swing.JFrame {
         jLabel5.setText("Password:");
 
         jLabel6.setToolTipText("");
-
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
 
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,6 +155,28 @@ public class employee extends javax.swing.JFrame {
             }
         });
 
+        jLabel7.setText("ID");
+
+        jLabel8.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel8.setText("jLabel8");
+
+        jLabel9.setText("Name");
+
+        jLabel10.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel10.setText("jLabel8");
+
+        jLabel11.setText("Email");
+
+        jLabel12.setText("Address");
+
+        jLabel13.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel13.setText("jLabel8");
+
+        jLabel14.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel14.setText("jLabel8");
+
+        jLabel15.setText("Current Password");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -97,95 +184,325 @@ public class employee extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4))
-                        .addGap(18, 18, 18)
+                        .addGap(35, 35, 35)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(61, 61, 61)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel1)))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel12)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel11))
+                                .addGap(37, 37, 37)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jButton2))
+                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel15)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(52, 52, 52)
-                                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addGap(23, 23, 23))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(14, 14, 14))
+                                        .addGap(30, 30, 30)
+                                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(58, 58, 58)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(18, 18, 18)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8))
+                        .addGap(58, 58, 58)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(23, 23, 23)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel9))
+                        .addGap(58, 58, 58)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)))
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel11))
+                        .addGap(58, 58, 58)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel12))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(98, 98, 98)
+                                .addComponent(jLabel1)
+                                .addGap(14, 14, 14))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addComponent(jLabel3))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15))))
+                .addGap(9, 9, 9))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        try {
+            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+                    "cloud_name", "dgxiyn1ze",
+                    "api_key", "343243467153357",
+                    "api_secret", "pg3FVkkw4zzpZyYWeMOrhFyS7cw"));
+            URL url = new URL("http://localhost/Net2HW2/api/change.php?");
+            Map<String, Object> params = new LinkedHashMap<>();
+            if (!(jTextField3.getText().equals(""))) {
+                params.put("name", jTextField3.getText());
+                params.put("id", LogIn.ID);
+                StringBuilder postData = new StringBuilder();
+                for (Map.Entry<String, Object> param : params.entrySet()) {
+                    if (postData.length() != 0) {
+                        postData.append('&');
+                    }
+                    postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                    postData.append('=');
+                    postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+                }
+                byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+                HttpURLConnection con2;
+                con2 = (HttpURLConnection) url.openConnection();
+
+                con2.setRequestMethod("POST");
+
+                con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con2.setUseCaches(false);
+                con2.setDoInput(true);
+                con2.setDoOutput(true);
+                DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+                da.writeBytes(postData.toString());
+                da.flush();
+                da.close();
+                BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+                String message = bf.readLine();
+                jLabel10.setText(message);
+            }
+            if (!(jTextField2.getText().equals(""))) {
+                params.clear();
+                params.put("address", jTextField2.getText());
+                params.put("id", LogIn.ID);
+                StringBuilder postData = new StringBuilder();
+                for (Map.Entry<String, Object> param : params.entrySet()) {
+                    if (postData.length() != 0) {
+                        postData.append('&');
+                    }
+                    postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                    postData.append('=');
+                    postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+                }
+                byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+                HttpURLConnection con2;
+                con2 = (HttpURLConnection) url.openConnection();
+
+                con2.setRequestMethod("POST");
+
+                con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con2.setUseCaches(false);
+                con2.setDoInput(true);
+                con2.setDoOutput(true);
+                DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+                da.writeBytes(postData.toString());
+                da.flush();
+                da.close();
+                BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+                String message = bf.readLine();
+                jLabel14.setText(message);
+            }
+            if (!(jTextField4.getText().equals(""))) {
+                params.clear();
+                params.put("email", jTextField4.getText());
+                params.put("id", LogIn.ID);
+                StringBuilder postData = new StringBuilder();
+                for (Map.Entry<String, Object> param : params.entrySet()) {
+                    if (postData.length() != 0) {
+                        postData.append('&');
+                    }
+                    postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                    postData.append('=');
+                    postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+                }
+                byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+                HttpURLConnection con2;
+                con2 = (HttpURLConnection) url.openConnection();
+
+                con2.setRequestMethod("POST");
+
+                con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con2.setUseCaches(false);
+                con2.setDoInput(true);
+                con2.setDoOutput(true);
+                DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+                da.writeBytes(postData.toString());
+                da.flush();
+                da.close();
+                BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+                String message = bf.readLine();
+                jLabel13.setText(message);
+                
+
+            }
+            if (!(jTextField5.getText().equals(""))) {
+                params.clear();
+                if ((jTextField6.getText().equals(msg[5]))) {
+                    params.put("password", jTextField5.getText());
+                    params.put("id", LogIn.ID);
+                    StringBuilder postData = new StringBuilder();
+                    for (Map.Entry<String, Object> param : params.entrySet()) {
+                        if (postData.length() != 0) {
+                            postData.append('&');
+                        }
+                        postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                        postData.append('=');
+                        postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+                    }
+                    byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+                    HttpURLConnection con2;
+                    con2 = (HttpURLConnection) url.openConnection();
+
+                    con2.setRequestMethod("POST");
+
+                    con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                    con2.setUseCaches(false);
+                    con2.setDoInput(true);
+                    con2.setDoOutput(true);
+                    DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+                    da.writeBytes(postData.toString());
+                    da.flush();
+                    da.close();
+                    BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+                    String message = bf.readLine();
+                    JOptionPane.showMessageDialog(null, message);
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Passwords don't match.");
+                }
+            }
+            if (path != null) {
+                params.clear();
+                Image img = null;
+                File file = new File(path);
+                System.out.println(path);
+                Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+                System.out.println(uploadResult);
+                String imgUrl = uploadResult.get("secure_url").toString();
+                params.put("image", imgUrl);
+                params.put("id", LogIn.ID);
+                StringBuilder postData = new StringBuilder();
+                for (Map.Entry<String, Object> param : params.entrySet()) {
+                    if (postData.length() != 0) {
+                        postData.append('&');
+                    }
+                    postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                    postData.append('=');
+                    postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+                }
+                byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+                HttpURLConnection con2;
+                con2 = (HttpURLConnection) url.openConnection();
+
+                con2.setRequestMethod("POST");
+
+                con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con2.setUseCaches(false);
+                con2.setDoInput(true);
+                con2.setDoOutput(true);
+                DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+                da.writeBytes(postData.toString());
+                da.flush();
+                da.close();
+                BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+                String message = bf.readLine();
+                URL imgUrl2 = new URL(message);
+                img = ImageIO.read(imgUrl2);
+                jLabel6.setIcon(new ImageIcon(img));
+                path = null;
+
+            }
+
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        LogIn log = new LogIn();
+        this.setVisible(false);
+        log.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+        int r = j.showOpenDialog(null);
+        if (r == JFileChooser.APPROVE_OPTION) {
+            // set the label to the path of the selected file
+            path = j.getSelectedFile().getAbsolutePath();
+            jLabel6.setIcon(new ImageIcon(path));
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
@@ -228,15 +545,23 @@ public class employee extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
 }

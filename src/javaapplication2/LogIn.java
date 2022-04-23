@@ -4,15 +4,24 @@
  */
 package javaapplication2;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  *
  * @author mahmood
  */
 public class LogIn extends javax.swing.JFrame {
-
-    /**
-     * Creates new form LogIn
-     */
+    public static String ID = "";
+   public String setID(String id){
+        return id;
+    }
     public LogIn() {
         initComponents();
     }
@@ -47,8 +56,18 @@ public class LogIn extends javax.swing.JFrame {
         jLabel2.setText("Password:");
 
         jButton1.setText("Log In");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("creat new account");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -95,6 +114,54 @@ public class LogIn extends javax.swing.JFrame {
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        signup sign = new signup();
+        this.setVisible(false);
+        sign.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            URL url = new URL("http://localhost/Net2HW2/api/check.php");
+            Map<String, Object> params = new LinkedHashMap<>();
+            params.put("id", jTextField1.getText());
+            params.put("password", jTextField2.getText());
+            StringBuilder postData = new StringBuilder();
+            for (Map.Entry<String, Object> param : params.entrySet()) {
+                if (postData.length() != 0) {
+                    postData.append('&');
+                }
+                postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                postData.append('=');
+                postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+            }
+            byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+            HttpURLConnection con2;
+            con2 = (HttpURLConnection) url.openConnection();
+
+            con2.setRequestMethod("POST");
+
+            con2.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            con2.setUseCaches(false);
+            con2.setDoInput(true);
+            con2.setDoOutput(true);
+            DataOutputStream da = new DataOutputStream(con2.getOutputStream());
+            da.writeBytes(postData.toString());
+            da.flush();
+            da.close();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(con2.getInputStream()));
+            String message = bf.readLine();
+            if (message.equals("true")) {
+                ID = setID(jTextField1.getText());
+                System.out.println(ID);
+                employee emp = new employee();
+                this.setVisible(false);
+                emp.setVisible(true);
+            }
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

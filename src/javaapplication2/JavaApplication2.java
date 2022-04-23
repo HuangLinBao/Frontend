@@ -10,17 +10,16 @@ package javaapplication2;
  */
 public class JavaApplication2 {
 
+    
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        
-       LogIn log=new LogIn();
+        // TODO code application logic here  
+       LogIn log =new LogIn();
        log.setVisible(true);
-        employee frame = new employee();
-        frame.setSize(600,420);
-        frame.setVisible(true);
+        
     }
     
 }
